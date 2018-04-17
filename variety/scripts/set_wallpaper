@@ -260,3 +260,9 @@ fi
 if [ "$DESKTOP_SESSION" == "awesome" ]; then
     feh --bg-fill "$WP" 2> /dev/null
 fi
+
+# Solution for Bspwm
+
+if [ "$DESKTOP_SESSION" == "bspwm" ]; then
+    feh --bg-fill "$WP" 2> /dev/null
+fi
