@@ -27,10 +27,9 @@
 WP=$1
 
 
-
 # Enlightenment
 # Needs Modules/System/DBus Extension loaded to work
-if [ "`echo $DESKTOP | grep Enlightenment`" ]; then
+if [[ "$DESKTOP" == *"Enlightenment"* ]] || [[ "$DESKTOP" == *"Moksha"* ]]; then
 
     OUTPUT_DIR="$HOME/.e/e/backgrounds"
 
@@ -62,14 +61,14 @@ if [ "`echo $DESKTOP | grep Enlightenment`" ]; then
     DIMENSION="$(identify -format "%w/%h" "$WP")"
 
     if [ ! -z "$DIMENSION" ]; then
-        WIDTH=$(echo $DIMENSION | cut -d/ -f1)
-        HEIGHT=$(echo $DIMENSION | cut -d/ -f2)
+        WIDTH="$(echo "$DIMENSION" | cut -d/ -f1)"
+        HEIGHT="$(echo "$DIMENSION" | cut -d/ -f2)"
         IMAGE="$(echo "$WP" | sed 's/[^[:alnum:]_-]/\\&/g')"
 
-        if [ -z "$HEIGHT" -o "$HEIGHT" = "0" ]; then
+        if [ -z "$HEIGHT" ] || [ "$HEIGHT" = "0" ]; then
             ASPECT="0.0"
         else
-            ASPECT=$(echo "scale=9; $DIMENSION" | bc)
+            ASPECT="$(echo "scale=9; $DIMENSION" | bc)"
         fi
     fi
 
@@ -86,13 +85,13 @@ if [ "`echo $DESKTOP | grep Enlightenment`" ]; then
     screen_count=1
     # If xrandr is available use it to get screen desk_x_count
     if command -v xrandr >/dev/null 2>&1; then
-        screen_count=$(xrandr -q | grep ' connected' | wc -l)
+        screen_count=$(xrandr -q | grep -c ' connected')
     fi
 
     ## Set the wallpaper for each virtual desktop
-    for ((x=0; x<$desk_x_count; x++)); do
-        for ((y=0; y<$desk_y_count; y++)); do
-            for ((z=0; z<$screen_count; z++)); do
+    for ((x=0; x<desk_x_count; x++)); do
+        for ((y=0; y<desk_y_count; y++)); do
+            for ((z=0; z<screen_count; z++)); do
                 # -desktop-bg-add OPT1 OPT2 OPT3 OPT4 OPT5 Add a desktop bg definition.
                 # OPT1 = ContainerNo OPT2 = ZoneNo OPT3 = Desk_x. OPT4 = Desk_y. OPT5 = bg file path
                 enlightenment_remote -desktop-bg-add 0 "$z" "$x" "$y" "$OFILE.edj"&
@@ -105,12 +104,12 @@ if [ "`echo $DESKTOP | grep Enlightenment`" ]; then
     #   replaced yet then the wallpaper will get set back to the theme one causing ugly artifacts
     LAST_WALLPAPER_FILE="$HOME/.config/variety/.enlightenment_last_wallpaper.txt"
 
-    if [ -e $LAST_WALLPAPER_FILE ]; then
-        find $OUTPUT_DIR -name "variety_wallpaper*.*" | grep -v "$OFILE.edj" | grep -v $(cat $LAST_WALLPAPER_FILE) | xargs rm
+    if [ -e "$LAST_WALLPAPER_FILE" ]; then
+        find "$OUTPUT_DIR" -name "variety_wallpaper*.*" | grep -v "$OFILE.edj" | grep -v "$(cat "$LAST_WALLPAPER_FILE")" | xargs rm
     else
-        find $OUTPUT_DIR -name "variety_wallpaper*.*" | grep -v "$OFILE.edj" | xargs rm
+        find "$OUTPUT_DIR" -name "variety_wallpaper*.*" | grep -v "$OFILE.edj" | xargs rm
     fi
-    echo "$OFILE.edj" > $LAST_WALLPAPER_FILE
+    echo "$OFILE.edj" > "$LAST_WALLPAPER_FILE"
     exit 0
 fi
 
@@ -118,17 +117,17 @@ fi
 # Afterwards, with the command below, Variety will just overwrite the single file there when changing the wallpaper
 # and KDE will refresh it
 # On Plasma 5.7 and above, the wallpaper choosing is automatic.
-if [ ${KDE_FULL_SESSION} == "true" ]; then
+if [ "${KDE_FULL_SESSION}" == "true" ]; then
     # Plasma 5.7 introduced a new feature to set the wallpaper via a qdbus script:
     # https://github.com/KDE/plasma-workspace/commit/903cbfd7e267a4812a6ec222eb7e1b5dd775686f
-    if [[ -n ${KDE_SESSION_VERSION} && ${KDE_SESSION_VERSION} == '5' ]]; then
+    if [[ -n "${KDE_SESSION_VERSION}" && "${KDE_SESSION_VERSION}" == '5' ]]; then
         qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
         var allDesktops = desktops();
         for (i=0; i < allDesktops.length; i++) {
             d = allDesktops[i];
             d.wallpaperPlugin = 'org.kde.image';
             d.currentConfigGroup = Array('Wallpaper', 'org.kde.image', 'General');
-            d.writeConfig('Image', 'file://"$WP"')
+            d.writeConfig('Image', 'file://""$WP""')
         }
         "
         # Reuse the exit code from qdbus
@@ -137,7 +136,7 @@ if [ ${KDE_FULL_SESSION} == "true" ]; then
         WALLDIR="$(xdg-user-dir PICTURES)/variety-wallpaper"
         mkdir -p "$WALLDIR"
         # Remove all old wallpapers
-        rm -fv ${WALLDIR}/*
+        rm -fv "${WALLDIR}"/*
 
         NEWWP="${WALLDIR}/wallpaper-kde-$RANDOM.jpg"
         cp "$WP" "$NEWWP"
@@ -148,12 +147,12 @@ fi
 # Cinnamon, for cases when it is detectable
 if [ "$XDG_CURRENT_DESKTOP" == "X-Cinnamon" ]; then
     gsettings set org.cinnamon.background picture-uri "file://$WP" 2> /dev/null
-    if [ "`gsettings get org.cinnamon.background picture-options`" == "'none'" ]; then
+    if [ "$(gsettings get org.cinnamon.background picture-options)" == "'none'" ]; then
         gsettings set org.cinnamon.background picture-options 'zoom'
     fi
 
     gsettings set org.cinnamon.desktop.background picture-uri "file://$WP" 2> /dev/null
-    if [ "`gsettings get org.cinnamon.desktop.background picture-options`" == "'none'" ]; then
+    if [ "$(gsettings get org.cinnamon.desktop.background picture-options)" == "'none'" ]; then
         gsettings set org.cinnamon.desktop.background picture-options 'zoom'
     fi
     exit 0
@@ -161,14 +160,14 @@ fi
 
 # Gnome 3, Unity
 gsettings set org.gnome.desktop.background picture-uri "file://$WP" 2> /dev/null
-if [ "`gsettings get org.gnome.desktop.background picture-options`" == "'none'" ]; then
+if [ "$(gsettings get org.gnome.desktop.background picture-options)" == "'none'" ]; then
     gsettings set org.gnome.desktop.background picture-options 'zoom'
 fi
 
 # Deepin
-if [ "$(gsettings list-schemas | grep com.deepin.wrap.gnome.desktop.background | wc -l)" -ge 1 ]; then
+if [ "$(gsettings list-schemas | grep -c com.deepin.wrap.gnome.desktop.background)" -ge 1 ]; then
     gsettings set com.deepin.wrap.gnome.desktop.background picture-uri "file://$WP"
-    if [ "`gsettings get com.deepin.wrap.gnome.desktop.background picture-options`" == "'none'" ]; then
+    if [ "$(gsettings get com.deepin.wrap.gnome.desktop.background picture-options)" == "'none'" ]; then
         gsettings set com.deepin.wrap.gnome.desktop.background picture-options 'zoom'
     fi
 fi
@@ -177,10 +176,10 @@ fi
 command -v xfconf-query >/dev/null 2>&1
 rc=$?
 if [[ $rc = 0 ]] ; then
-    for i in $(xfconf-query -c xfce4-desktop -p /backdrop -l|egrep -e "screen.*/monitor.*image-path$" -e "screen.*/monitor.*/last-image$"); do
-        xfconf-query -c xfce4-desktop -p $i -n -t string -s "" 2> /dev/null
-        xfconf-query -c xfce4-desktop -p $i -s "" 2> /dev/null
-        xfconf-query -c xfce4-desktop -p $i -s "$WP" 2> /dev/null
+    for i in $(xfconf-query -c xfce4-desktop -p /backdrop -l | grep -E -e "screen.*/monitor.*image-path$" -e "screen.*/monitor.*/last-image$"); do
+        xfconf-query -c xfce4-desktop -p "$i" -n -t string -s "" 2> /dev/null
+        xfconf-query -c xfce4-desktop -p "$i" -s "" 2> /dev/null
+        xfconf-query -c xfce4-desktop -p "$i" -s "$WP" 2> /dev/null
     done
 fi
 
@@ -194,9 +193,15 @@ if [ "$XDG_CURRENT_DESKTOP" == "LXQt" ]; then
     pcmanfm-qt --set-wallpaper "$WP" 2> /dev/null
 fi
 
-# i3-wm/Feh. Use Feh only for i3, as it may cause problems with Nautilus, (see bug https://bugs.launchpad.net/variety/+bug/1047083)
-if [ "$XDG_CURRENT_DESKTOP" == "i3" ] || [ "$XDG_SESSION_DESKTOP" == "i3" ]; then
-    feh --bg-fill "$WP" 2> /dev/null
+# i3, openbox, dwm: use either feh or nitrogen
+if [[ "$XDG_CURRENT_DESKTOP" == "i3"* ]] || [[ "$XDG_SESSION_DESKTOP" == "i3"* ]] ||
+        [[ "$DESKTOP_SESSION" == "openbox" ]] || [[ "$XDG_SESSION_DESKTOP" == *"dwm"* ]] ||
+        [[ "$XDG_CURRENT_DESKTOP" == *"dwm"* ]]; then
+    if command -v "feh" >/dev/null 2>&1; then
+        feh --bg-fill "$WP" 2> /dev/null
+    elif command -v "nitrogen" >/dev/null 2>&1; then
+        nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+    fi
 fi
 
 # trinity
@@ -219,18 +224,6 @@ gsettings set org.cinnamon.desktop.background picture-uri "file://$WP" 2> /dev/n
 # Gnome 2
 gconftool-2 -t string -s /desktop/gnome/background/picture_filename "$WP" 2> /dev/null
 
-# ArcoLinux commented out
-# openbox/nitrogen
-#	check if openbox is running
-#	if so, check if nitrogen is installed
-#	now apply
-#if [ "$DESKTOP_SESSION" == "openbox" ]; then
-#    if dpkg-query -Wf'${db:Status-abbrev}' nitrogen 2>/dev/null | grep -q '^i'; then
-#        nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
-#    fi
-#fi
-
-
 # Awesome Window Manager
 
 # Set the path to the wallpaper using awesome-client, which communicates with awesome using D-Bus.
@@ -251,18 +244,27 @@ gconftool-2 -t string -s /desktop/gnome/background/picture_filename "$WP" 2> /de
 
 # Solution for Openbox
 
-if [ "$DESKTOP_SESSION" == "openbox" ]; then
-    feh --bg-fill "$WP" 2> /dev/null
+# Solution for Awesome
+
+# awesome: use either feh or nitrogen
+if [[ "$XDG_CURRENT_DESKTOP" == "awesome"* ]] || [[ "$XDG_SESSION_DESKTOP" == "awesome"* ]] ||; then
+    if command -v "feh" >/dev/null 2>&1; then
+        feh --bg-fill "$WP" 2> /dev/null
+    elif command -v "nitrogen" >/dev/null 2>&1; then
+        nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+    fi
 fi
 
-# Solution for Awesome and Dual Screens - one wallpaper per monitor - not stretched
-
-if [ "$DESKTOP_SESSION" == "awesome" ]; then
-    feh --bg-fill "$WP" 2> /dev/null
-fi
 
 # Solution for Bspwm
 
-if [ "$DESKTOP_SESSION" == "bspwm" ]; then
-    feh --bg-fill "$WP" 2> /dev/null
+# awesome: use either feh or nitrogen
+if [[ "$XDG_CURRENT_DESKTOP" == "bspwm"* ]] || [[ "$XDG_SESSION_DESKTOP" == "bspwm"* ]] ||; then
+    if command -v "feh" >/dev/null 2>&1; then
+        feh --bg-fill "$WP" 2> /dev/null
+    elif command -v "nitrogen" >/dev/null 2>&1; then
+        nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+    fi
 fi
+
+
