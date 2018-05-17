@@ -242,29 +242,21 @@ gconftool-2 -t string -s /desktop/gnome/background/picture_filename "$WP" 2> /de
 
 ### ArcoLinux Solutions ###
 
-# Solution for Openbox
-
-# Solution for Awesome
-
 # awesome: use either feh or nitrogen
-if [[ "$XDG_CURRENT_DESKTOP" == "awesome"* ]] || [[ "$XDG_SESSION_DESKTOP" == "awesome"* ]] ||; then
-    if command -v "feh" >/dev/null 2>&1; then
-        feh --bg-fill "$WP" 2> /dev/null
-    elif command -v "nitrogen" >/dev/null 2>&1; then
-        nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
-    fi
+if [ "$DESKTOP_SESSION" == "awesome" ]; then
+  if command -v "feh" >/dev/null 2>&1; then
+    feh --bg-fill "$WP" 2> /dev/null
+  elif command -v "nitrogen" >/dev/null 2>&1; then
+    nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+  fi
 fi
 
 
-# Solution for Bspwm
-
-# awesome: use either feh or nitrogen
-if [[ "$XDG_CURRENT_DESKTOP" == "bspwm"* ]] || [[ "$XDG_SESSION_DESKTOP" == "bspwm"* ]] ||; then
-    if command -v "feh" >/dev/null 2>&1; then
-        feh --bg-fill "$WP" 2> /dev/null
-    elif command -v "nitrogen" >/dev/null 2>&1; then
-        nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
-    fi
+# Bspwm : use either feh or nitrogen
+if [ "$DESKTOP_SESSION" == "bspwm" ] ; then
+  if command -v "feh" >/dev/null 2>&1; then
+    feh --bg-fill "$WP" 2> /dev/null
+  elif command -v "nitrogen" >/dev/null 2>&1; then
+    nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+  fi
 fi
-
-
