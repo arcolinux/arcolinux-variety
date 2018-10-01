@@ -131,7 +131,17 @@ if [ "${KDE_FULL_SESSION}" == "true" ]; then
         }
         "
         # Reuse the exit code from qdbus
-        exit "$?"
+        qdbus_exitcode="$?"
+
+        if [[ "$qdbus_exitcode" -ne 0 ]]; then
+            # If the script fails, show a notification.
+            kdialog --title "Variety: cannot change Plasma wallpaper" --passivepopup "Could not change the Plasma 5 wallpaper; \
+                make sure that you're using Plasma 5.7+ and have widgets unlocked.\n----\n \
+                Due to Plasma limitations, external programs cannot automatically change the wallpaper when the widgets are locked.\n \
+                See https://git.io/vprpM for more information." --icon variety 10  # Final number is the length of the popup
+        fi
+        exit "$qdbus_exitcode"
+
     else
         WALLDIR="$(xdg-user-dir PICTURES)/variety-wallpaper"
         mkdir -p "$WALLDIR"
@@ -206,25 +216,22 @@ fi
 
 # trinity
 if [ "$XDG_CURRENT_DESKTOP" == "Trinity" ]; then
+    # The 4 refers to display mode 4; valid ones are 1-8
     dcop kdesktop KBackgroundIface setWallpaper "$WP" 4 2> /dev/null
 fi
 
 # MATE after 1.6
 gsettings set org.mate.background picture-filename "$WP" 2> /dev/null
 
-# MATE before 1.6
-mateconftool-2 -t string -s /desktop/mate/background/picture_filename "$WP" 2> /dev/null
-
-# Cinnamon after 1.8, before 2.0
-gsettings set org.cinnamon.background picture-uri "file://$WP" 2> /dev/null
-
 # Cinnamon after 2.0
 gsettings set org.cinnamon.desktop.background picture-uri "file://$WP" 2> /dev/null
 
-# Gnome 2
-gconftool-2 -t string -s /desktop/gnome/background/picture_filename "$WP" 2> /dev/null
+# GNOME Screensaver / Lock screen - thanks to George C. de Araujo for the patch
+gsettings set org.gnome.desktop.screensaver picture-uri "file://$WP" 2> /dev/null
 
-# Awesome Window Manager
+# =====================================================================================
+
+# Awesome Window Manager (disabled by default as it needs more setup)
 
 # Set the path to the wallpaper using awesome-client, which communicates with awesome using D-Bus.
 # Be sure to start variety when you start awesome, such as by adding it to ~/.xinitrc in Arch Linux.
@@ -234,6 +241,7 @@ gconftool-2 -t string -s /desktop/gnome/background/picture_filename "$WP" 2> /de
 # NOTE: This config will change the wallpaper after your current awesome theme sets it.
 # As such, the theme's wallpaper will briefly appear before being replaced with variety's wallpaper.
 
+# =====================================================================================
 
 # Show a notification on wallpaper change (only when the change is automatic). Display the original filename, but the post-effects image.
 # name=$(echo "$3" | sed 's/\//\n/g'| tail -n 1)
