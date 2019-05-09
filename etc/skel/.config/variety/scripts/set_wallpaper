@@ -263,15 +263,15 @@ if [ "$DESKTOP_SESSION" == "awesome" ]; then
   fi
 fi
 
-
+# variety v0.7.2 provides good code for bspwm
 # Bspwm : use either feh or nitrogen
-if [ "$DESKTOP_SESSION" == "bspwm" ] ; then
-  if command -v "feh" >/dev/null 2>&1; then
-    feh --bg-fill "$WP" 2> /dev/null
-  elif command -v "nitrogen" >/dev/null 2>&1; then
-    nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
-  fi
-fi
+# if [ "$DESKTOP_SESSION" == "bspwm" ] ; then
+#   if command -v "feh" >/dev/null 2>&1; then
+#     feh --bg-fill "$WP" 2> /dev/null
+#   elif command -v "nitrogen" >/dev/null 2>&1; then
+#     nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+#   fi
+# fi
 
 
 # Xmonad : use either feh or nitrogen
