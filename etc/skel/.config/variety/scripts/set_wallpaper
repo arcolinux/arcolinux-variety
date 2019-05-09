@@ -1,17 +1,20 @@
 #!/bin/bash
 #
-# This script is run by Variety when a new wallpaper is set.
-# You can use bash, python or whatever suits you for the script.
-# Here you can put custom commands for setting the wallpaper on your specific desktop environment
-# or run commands like notify-send to notify you of the change, or you can
-# run commands that would theme your browser, login screen or whatever you desire.
+# This script is run by Variety when a new wallpaper is set. You can use Bash, Python or whatever suits you best.
+# Here you can put custom commands for setting the wallpaper on your specific desktop environment,
+# or run commands like notify-send that notify you of the change. You can also add commands to theme your browser,
+# login screen or whatever you desire.
+#
+# Occasionally new versions of this script are released to bring support for new desktops. To apply them, you
+# should either delete this copy (in ~/.config/data/scripts/) and restart Variety, or merge in the changes yourself.
+# Bug fixes are automatically applied by Variety provided the local copy is never changed.
 #
 # PARAMETERS:
 # $1: The first passed parameter is the absolute path to the wallpaper image to be set as wallpaper
 # (after effects, clock, etc. are applied).
 #
 # $2: The second passed parameter is "auto" when the wallpaper is changed automatically (i.e. regular change), "manual"
-# when the user has triggered the change or "refresh" when the change is triggered by a change in quotes, clock, etc.
+# when the user has triggered the change, or "refresh" when the change is triggered by a change in quotes, clock, etc.
 #
 # $3: The third passed parameter is the absolute path to the original wallpaper image (before effects, clock, etc.)
 #
@@ -206,12 +209,16 @@ fi
 # i3, openbox, dwm: use either feh or nitrogen
 if [[ "$XDG_CURRENT_DESKTOP" == "i3"* ]] || [[ "$XDG_SESSION_DESKTOP" == "i3"* ]] ||
         [[ "$DESKTOP_SESSION" == "openbox" ]] || [[ "$XDG_SESSION_DESKTOP" == *"dwm"* ]] ||
-        [[ "$XDG_CURRENT_DESKTOP" == *"dwm"* ]]; then
+        [[ "$XDG_CURRENT_DESKTOP" == *"dwm"* || "$DESKTOP_SESSION" == "bspwm" ]]; then
     if command -v "feh" >/dev/null 2>&1; then
         feh --bg-fill "$WP" 2> /dev/null
     elif command -v "nitrogen" >/dev/null 2>&1; then
         nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
     fi
+fi
+
+if [[ -n $SWAYSOCK ]]; then
+    swaymsg output "*" bg "$WP" fill 2> /dev/null
 fi
 
 # trinity
@@ -229,21 +236,18 @@ gsettings set org.cinnamon.desktop.background picture-uri "file://$WP" 2> /dev/n
 # GNOME Screensaver / Lock screen - thanks to George C. de Araujo for the patch
 gsettings set org.gnome.desktop.screensaver picture-uri "file://$WP" 2> /dev/null
 
-# =====================================================================================
-
-# Awesome Window Manager (disabled by default as it needs more setup)
-
-# Set the path to the wallpaper using awesome-client, which communicates with awesome using D-Bus.
-# Be sure to start variety when you start awesome, such as by adding it to ~/.xinitrc in Arch Linux.
-
-# echo "local gears = require(\"gears\") gears.wallpaper.maximized(\"$1\", s, true)" | awesome-client
-
+# Awesome Window Manager
+# Be sure to start variety when you start awesome, such as by adding it to ~/.xinitrc
 # NOTE: This config will change the wallpaper after your current awesome theme sets it.
-# As such, the theme's wallpaper will briefly appear before being replaced with variety's wallpaper.
+# As such, the theme's wallpaper will briefly appear before being replaced with Variety's wallpaper.
+if [[ "$DESKTOP_STARTUP_ID" == "awesome"* ]]; then
+	echo "local gears = require(\"gears\") gears.wallpaper.maximized(\"$1\", s, true)" | awesome-client
+fi
 
 # =====================================================================================
 
-# Show a notification on wallpaper change (only when the change is automatic). Display the original filename, but the post-effects image.
+# OPTIONAL: Show a notification on automatic wallpaper change.
+# Display the original filename in the notification, but actually apply the post-effects image.
 # name=$(echo "$3" | sed 's/\//\n/g'| tail -n 1)
 # if [ "$2" == "auto" ]; then notify-send --icon "$WP" "Wallpaper changed" "$name" ; fi
 
