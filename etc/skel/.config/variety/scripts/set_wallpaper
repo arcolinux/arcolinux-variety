@@ -301,3 +301,12 @@ if [ "$DESKTOP_SESSION" == "herbstluftwm" ] ; then
     nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
   fi
 fi
+
+# jwm : use either feh or nitrogen
+if [ "$DESKTOP_SESSION" == "jwm" ] ; then
+  if command -v "feh" >/dev/null 2>&1; then
+    feh --bg-fill "$WP" 2> /dev/null
+  elif command -v "nitrogen" >/dev/null 2>&1; then
+    nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+  fi
+fi
