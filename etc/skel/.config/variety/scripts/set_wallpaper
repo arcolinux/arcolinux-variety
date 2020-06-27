@@ -203,7 +203,7 @@ fi
 # For simple WMs, use either feh or nitrogen
 # Implementation note: this uses spaces around list items to enforce matching whole words.
 # This also means that an empty variable won't cause false positives, since it expands to "  "
-SIMPLE_WMS=("awesome" "bspwm" "dwm" "herbstluftwm" "i3" "i3-with-shmlog" "jwm" "openbox" "qtile" "xmonad")
+SIMPLE_WMS=("awesome" "bspwm" "dwm" "herbstluftwm" "i3" "i3-with-shmlog" "jwm" "openbox" "qtile" "spectrwm" "xmonad")
 if [[ " ${SIMPLE_WMS[*]} " = *" $XDG_CURRENT_DESKTOP "* || " ${SIMPLE_WMS[*]} " = *" $XDG_SESSION_DESKTOP "* ||
       " ${SIMPLE_WMS[*]} " = *" $DESKTOP_SESSION "* ]]; then
 	if command -v "feh" >/dev/null 2>&1; then
@@ -303,6 +303,15 @@ fi
 
 # jwm : use either feh or nitrogen
 # if [ "$DESKTOP_SESSION" == "jwm" ] ; then
+#   if command -v "feh" >/dev/null 2>&1; then
+#     feh --bg-fill "$WP" 2> /dev/null
+#   elif command -v "nitrogen" >/dev/null 2>&1; then
+#     nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+#   fi
+# fi
+
+#spectrwm : use either feh or nitrogen
+# if [ "$DESKTOP_SESSION" == "spectrwm" ] ; then
 #   if command -v "feh" >/dev/null 2>&1; then
 #     feh --bg-fill "$WP" 2> /dev/null
 #   elif command -v "nitrogen" >/dev/null 2>&1; then
