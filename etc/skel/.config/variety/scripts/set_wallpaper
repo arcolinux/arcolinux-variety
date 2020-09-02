@@ -171,13 +171,6 @@ if [ "$(gsettings get org.gnome.desktop.background picture-options)" == "'none'"
     gsettings set org.gnome.desktop.background picture-options 'zoom'
 fi
 
-# GNOME Screensaver / Lock screen - thanks to George C. de Araujo for the patch
-gsettings set org.gnome.desktop.screensaver picture-uri "file://$WP" 2> /dev/null
-if [ "$(gsettings get org.gnome.desktop.screensaver picture-options)" == "'none'" ]; then
-    gsettings set org.gnome.desktop.screensaver picture-options 'zoom'
-fi
-
-
 # Deepin
 if [ "$(gsettings list-schemas | grep -c com.deepin.wrap.gnome.desktop.background)" -ge 1 ]; then
     gsettings set com.deepin.wrap.gnome.desktop.background picture-uri "file://$WP"
@@ -210,7 +203,7 @@ fi
 # For simple WMs, use either feh or nitrogen
 # Implementation note: this uses spaces around list items to enforce matching whole words.
 # This also means that an empty variable won't cause false positives, since it expands to "  "
-SIMPLE_WMS=("awesome" "bspwm" "dwm" "herbstluftwm" "i3" "i3-with-shmlog" "jwm" "openbox" "qtile" "spectrwm" "xmonad")
+SIMPLE_WMS=("awesome" "bspwm" "dwm" "herbstluftwm" "i3" "i3-with-shmlog" "icewm-session" "jwm" "openbox" "qtile" "spectrwm" "xmonad")
 if [[ " ${SIMPLE_WMS[*]} " = *" $XDG_CURRENT_DESKTOP "* || " ${SIMPLE_WMS[*]} " = *" $XDG_SESSION_DESKTOP "* ||
       " ${SIMPLE_WMS[*]} " = *" $DESKTOP_SESSION "* ]]; then
 	if command -v "feh" >/dev/null 2>&1; then
@@ -235,7 +228,7 @@ gsettings set org.mate.background picture-filename "$WP" 2> /dev/null
 
 # Cinnamon after 2.0
 gsettings set org.cinnamon.desktop.background picture-uri "file://$WP" 2> /dev/null
-if [ "$(gsettings get org.cinnamon.desktop.background picture-options 2>/dev/null)" == "'none'" ]; then
+if [ "$(gsettings get org.cinnamon.desktop.background picture-options)" == "'none'" ]; then
 	gsettings set org.cinnamon.desktop.background picture-options 'zoom'
 fi
 
@@ -246,8 +239,8 @@ gsettings set org.gnome.desktop.screensaver picture-uri "file://$WP" 2> /dev/nul
 # Be sure to start variety when you start awesome, such as by adding it to ~/.xinitrc
 # NOTE: This config will change the wallpaper after your current awesome theme sets it.
 # As such, the theme's wallpaper will briefly appear before being replaced with Variety's wallpaper.
-if [[ "$XDG_SESSION_DESKTOP $DESKTOP_STARTUP_ID $DESKTOP_SESSION $XDG_CURRENT_DESKTOP" == *"awesome"* ]]; then
-	echo "local gears = require(\"gears\") gears.wallpaper.maximized(\"$1\", nil)" | awesome-client
+if [[ "$DESKTOP_STARTUP_ID" == "awesome"* ]]; then
+	echo "local gears = require(\"gears\") gears.wallpaper.maximized(\"$1\", s, true)" | awesome-client
 fi
 
 # =====================================================================================
@@ -317,8 +310,17 @@ fi
 #   fi
 # fi
 
-#spectrwm : use either feh or nitrogen
+# spectrwm : use either feh or nitrogen
 # if [ "$DESKTOP_SESSION" == "spectrwm" ] ; then
+#   if command -v "feh" >/dev/null 2>&1; then
+#     feh --bg-fill "$WP" 2> /dev/null
+#   elif command -v "nitrogen" >/dev/null 2>&1; then
+#     nitrogen --set-zoom-fill --save "$WP" 2> /dev/null
+#   fi
+# fi
+
+# icewm : use either feh or nitrogen
+# if [ "$DESKTOP_SESSION" == "icewm-session" ] ; then
 #   if command -v "feh" >/dev/null 2>&1; then
 #     feh --bg-fill "$WP" 2> /dev/null
 #   elif command -v "nitrogen" >/dev/null 2>&1; then
