@@ -239,8 +239,6 @@ if [ "$(gsettings get org.cinnamon.desktop.background picture-options 2>/dev/nul
 	gsettings set org.cinnamon.desktop.background picture-options 'zoom'
 fi
 
-# GNOME Screensaver / Lock screen - thanks to George C. de Araujo for the patch
-gsettings set org.gnome.desktop.screensaver picture-uri "file://$WP" 2> /dev/null
 
 # Awesome Window Manager
 # Be sure to start variety when you start awesome, such as by adding it to ~/.xinitrc
