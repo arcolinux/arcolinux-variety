@@ -264,7 +264,6 @@ if [ "$(gsettings get org.cinnamon.desktop.background picture-options 2>/dev/nul
 	gsettings set org.cinnamon.desktop.background picture-options 'zoom'
 fi
 
-
 # Awesome Window Manager
 # Be sure to start variety when you start awesome, such as by adding it to ~/.xinitrc
 # NOTE: This config will change the wallpaper after your current awesome theme sets it.
