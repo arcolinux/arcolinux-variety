@@ -255,6 +255,10 @@ if [[ -n $SWAYSOCK || $XDG_CURRENT_DESKTOP == "Hyprland" ]]; then
     fi
 fi
 
+if [ "$XDG_CURRENT_DESKTOP" == "wayfire" ]; then
+    swaybg --output '*' --mode fill --image "$WP" &
+fi
+
 # trinity
 if [ "$XDG_CURRENT_DESKTOP" == "Trinity" ]; then
     # The 4 refers to display mode 4; valid ones are 1-8
