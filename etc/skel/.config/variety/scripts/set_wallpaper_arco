@@ -256,7 +256,16 @@ if [[ -n $SWAYSOCK || $XDG_CURRENT_DESKTOP == "Hyprland" ]]; then
 fi
 
 if [ "$XDG_CURRENT_DESKTOP" == "wayfire" ]; then
-    swaybg --output '*' --mode fill --image "$WP" &
+    if command -v "swaybg" >/dev/null 2>&1; then
+        PID=`pidof swaybg`
+        swaybg -i "$WP" -m fill &
+        if [ ! -z "$PID" ]; then
+            sleep 1
+            kill $PID 2>/dev/null
+        fi
+    else
+        swaymsg output "*" bg "$WP" fill 2> /dev/null
+    fi
 fi
 
 # trinity
