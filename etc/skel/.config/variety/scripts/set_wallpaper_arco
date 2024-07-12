@@ -218,7 +218,7 @@ fi
 # Implementation note: this uses spaces around list items to enforce matching whole words.
 # This also means that an empty variable won't cause false positives, since it expands to "  "
 # FOR SDDM
-SIMPLE_WMS=("/usr/share/xsessions/awesome" "/usr/share/xsessions/bspwm" "/usr/share/xsessions/chadwm" "/usr/share/xsessions/cwm" "/usr/share/xsessions/dk" "/usr/share/xsessions/dusk" "/usr/share/xsessions/dwm" "/usr/share/xsessions/fvwm3" "/usr/share/xsessions/herbstluftwm" "/usr/share/xsessions/hypr""/usr/share/xsessions/i3" "/usr/share/xsessions/i3-with-shmlog" "/usr/share/xsessions/icewm" "/usr/share/xsessions/icewm-session" "/usr/share/xsessions/jwm" "/usr/share/xsessions/leftwm" "/usr/share/xsessions/nimdow" "/usr/share/xsessions/openbox" "/usr/share/xsessions/qtile" "/usr/share/xsessions/spectrwm" "/usr/share/xsessions/wmderland" "/usr/share/xsessions/xmonad")
+SIMPLE_WMS=("/usr/share/xsessions/awesome" "/usr/share/xsessions/bspwm" "/usr/share/xsessions/flexi" "/usr/share/xsessions/chadwm" "/usr/share/xsessions/cwm" "/usr/share/xsessions/dk" "/usr/share/xsessions/dusk" "/usr/share/xsessions/dwm" "/usr/share/xsessions/fvwm3" "/usr/share/xsessions/herbstluftwm" "/usr/share/xsessions/hypr""/usr/share/xsessions/i3" "/usr/share/xsessions/i3-with-shmlog" "/usr/share/xsessions/icewm" "/usr/share/xsessions/icewm-session" "/usr/share/xsessions/jwm" "/usr/share/xsessions/leftwm" "/usr/share/xsessions/nimdow" "/usr/share/xsessions/openbox" "/usr/share/xsessions/qtile" "/usr/share/xsessions/spectrwm" "/usr/share/xsessions/wmderland" "/usr/share/xsessions/xmonad")
 if [[ " ${SIMPLE_WMS[*]} " = *" $XDG_CURRENT_DESKTOP "* || " ${SIMPLE_WMS[*]} " = *" $XDG_SESSION_DESKTOP "* ||
       " ${SIMPLE_WMS[*]} " = *" $DESKTOP_SESSION "* ]]; then
 	if command -v "feh" >/dev/null 2>&1; then
@@ -230,7 +230,7 @@ if [[ " ${SIMPLE_WMS[*]} " = *" $XDG_CURRENT_DESKTOP "* || " ${SIMPLE_WMS[*]} " 
     fi
 fi
 #FOR LIGHTDM
-SIMPLE_WMS=("awesome" "berry" "bspwm" "chadwm" "cwm" "dk" "dusk" "dwm" "fvwm3" "herbstluftwm" "hypr" "i3" "i3-with-shmlog" "icewm" "icewm-session" "jwm" "leftwm" "nimdow" "openbox" "qtile" "spectrwm" "worm" "wmderland" "xmonad")
+SIMPLE_WMS=("awesome" "berry" "bspwm" "chadwm" "cwm" "dk" "dusk" "flexi" "dwm" "fvwm3" "herbstluftwm" "hypr" "i3" "i3-with-shmlog" "icewm" "icewm-session" "jwm" "leftwm" "nimdow" "openbox" "qtile" "spectrwm" "worm" "wmderland" "xmonad")
 if [[ " ${SIMPLE_WMS[*]} " = *" $XDG_CURRENT_DESKTOP "* || " ${SIMPLE_WMS[*]} " = *" $XDG_SESSION_DESKTOP "* ||
       " ${SIMPLE_WMS[*]} " = *" $DESKTOP_SESSION "* ]]; then
     if command -v "feh" >/dev/null 2>&1; then
