@@ -1,1 +1,1 @@
-/usr/share/backgrounds/arcolinux/arco-wallpaper.jpg
+/usr/share/backgrounds/arco/arco-wallpaper.jpg
